@@ -2,12 +2,14 @@ import sys
 import pandas as pd
 from pathlib import Path
 from random import randint
+from itertools import count
 from pprint import pprint
 
 from Point import Point
 from Cluster import Cluster
 
 usage = 'Clusterer.py number_of_clusters /path/to/input/dataset.csv /path/to/output/file'
+MAX_ITERATIONS = 25
 
 if len(sys.argv) < 4:
     print('not enough arguments\n')
@@ -27,11 +29,22 @@ def main(argv):
     points = pointsFactory(data_frame=data)
     centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=points)
     clusters = createClusters(centroids)
-    addPointsToClusters(points, clusters)
-    pprint(clusters)
-    sse = calcSumOfSquareError(clusters)
-    print('sum of squares error: %i' % (sse))
 
+    iterator = count(2)
+    is_finished = False
+    iteration_number = 1
+    while(not is_finished and iteration_number <= MAX_ITERATIONS):
+        print('-'*80, '\n', 'iteration number: ', iteration_number)
+        iteration_number = next(iterator)
+        addPointsToClusters(points, clusters)
+        pprint(clusters)
+        sum_of_squares_error = calcSumOfSquareError(clusters)
+        print('sum of squares error: %i' % (sum_of_squares_error))
+        num_moved = 0
+        for cluster in clusters:
+            if(cluster.attemptMoveCentroid()):
+                num_moved += 1
+        is_finished = num_moved == 0
 
 #    with output_data_path.open(mode='w') as output_data_stream:
 #        data.to_csv(output_data_stream, index=False)
@@ -44,7 +57,7 @@ def pointsFactory(data_frame):
         id_num = tuple[1]
         x = tuple[2]
         y = tuple[3]
-        point = Point(id_num, x, y)
+        point = Point(x, y, id_num)
         points.append(point)
     return points
 
@@ -57,7 +70,7 @@ def createClusters(centroids):
 def chooseCentroids(number_of_clusters, points):
     centroid_points = []
     for i in range(0, number_of_clusters):
-        index = randint(0, len(points))
+        index = randint(0, len(points) - 1)
         centroid_points.append(points[index])
     return centroid_points
 
