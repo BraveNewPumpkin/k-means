@@ -5,7 +5,7 @@ class Cluster(object):
         self.id_num = next(self._id_counter)
         self.centroid = centroid
         self.points = []
-        self.distancesToCentroid = []
+        self.distances_to_centroid = []
     def __str__(self):
         return self.__repr__()
     def __repr__(self):
@@ -15,5 +15,10 @@ class Cluster(object):
 
     def addPoint(self, point, distanceToCentroid):
         self.points.append(point)
-        self.distancesToCentroid.append(distanceToCentroid)
+        self.distances_to_centroid.append(distanceToCentroid)
 
+    def calcSumOfSquareError(self):
+        sum_squared_distance = 0
+        for distance in self.distances_to_centroid:
+           sum_squared_distance += pow(distance, 2)
+        return sum_squared_distance

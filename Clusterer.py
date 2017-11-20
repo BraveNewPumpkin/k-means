@@ -29,6 +29,8 @@ def main(argv):
     clusters = createClusters(centroids)
     addPointsToClusters(points, clusters)
     pprint(clusters)
+    sse = calcSumOfSquareError(clusters)
+    print('sum of squares error: %i' % (sse))
 
 
 #    with output_data_path.open(mode='w') as output_data_stream:
@@ -69,9 +71,12 @@ def addPointsToClusters(points, clusters):
         clusters[min_distance_index].addPoint(point, min_distance)
     return clusters
 
+def calcSumOfSquareError(clusters):
+    sum_squared_distance = 0
+    for cluster in clusters:
+        sum_squared_distance += cluster.calcSumOfSquareError()
+    return sum_squared_distance
 
-
-    return distances
 
 
 main(sys.argv)
