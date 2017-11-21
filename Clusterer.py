@@ -5,7 +5,7 @@ from random import randint
 from itertools import count
 from pprint import pprint
 
-from Point import Point
+from Tweet import Tweet
 from Cluster import Cluster
 
 usage = 'Clusterer.py number_of_clusters /path/to/input/InitialSeeds.txt /path/to/input/Tweets.json /path/to/output/file'
@@ -30,7 +30,10 @@ def main(argv):
     # Read Tweet id and text
     data = pd.read_json(input_data_path, lines=True)[['id', 'text']]
 
-    #points = pointsFactory(data_frame=data)
+    # Create a dictionary with tweet_id as the key
+    tweet_dict = data.set_index('text').groupby('id').apply(lambda df: df.index.tolist()).to_dict()
+
+    points = tweetsFactory(data_frame=data)
 
     # Initial centroids
     seeds = pd.read_csv(initial_seeds_path).iloc[:, 0]
@@ -42,15 +45,13 @@ def main(argv):
     # Initialize clusters
     clusters = createClusters(centroids)
 
-    return
-
     iterator = count(2)
     is_finished = False
     iteration_number = 1
     while not is_finished and not iteration_number > MAX_ITERATIONS:
         print('-' * 80, '\n', 'iteration number: ', iteration_number)
         iteration_number = next(iterator)
-        addPointsToClusters(points, clusters)
+        addPointsToClusters(points, clusters, tweet_dict)
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
         print('sum of squares error:', sum_of_squares_error)
@@ -66,15 +67,14 @@ def main(argv):
     return 0
 
 
-def pointsFactory(data_frame):
-    points = []
+def tweetsFactory(data_frame):
+    tweets = []
     for tuple in data_frame.itertuples():
-        id_num = tuple[1]
-        x = tuple[2]
-        y = tuple[3]
-        point = Point(x, y, id_num)
-        points.append(point)
-    return points
+        tweet_id = tuple[1]
+        text = tuple[2]
+        tweet = Tweet(tweet_id, text)
+        tweets.append(tweet)
+    return tweets
 
 
 def createClusters(centroids):
@@ -92,11 +92,11 @@ def chooseCentroids(number_of_clusters, points):
     return centroid_points
 
 
-def addPointsToClusters(points, clusters):
+def addPointsToClusters(points, clusters, tweet_dict):
     for point in points:
         distances = []
         for cluster in clusters:
-            distances.append(point.distanceTo(cluster.centroid))
+            distances.append(point.distanceTo(''.join(tweet_dict[cluster.centroid])))
         min_distance = min(distances)
         min_distance_index = distances.index(min_distance)
         clusters[min_distance_index].addPoint(point, min_distance)

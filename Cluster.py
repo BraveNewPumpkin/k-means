@@ -1,6 +1,6 @@
 from itertools import count
 
-from Point import Point
+from Tweet import Tweet
 
 
 class Cluster(object):
@@ -17,7 +17,7 @@ class Cluster(object):
 
     def __repr__(self):
         string = str(self.id_num) + ' '
-        string += ','.join(map(lambda point: str(point.id_num), self.points))
+        string += ','.join(map(lambda point: str(point.tweet_id), self.points))
         return string
 
     def addPoint(self, point, distanceToCentroid):
@@ -34,15 +34,16 @@ class Cluster(object):
     def attemptMoveCentroid(self):
         if len(self.points) == 0:
             return False
-        centroid_x = 0
-        centroid_y = 0
-        for point in self.points:
-            centroid_x += point.x
-            centroid_y += point.y
-        centroid_x /= len(self.points)
-        centroid_y /= len(self.points)
-        new_centroid = Point(centroid_x, centroid_y)
-        if self.centroid.isEqual(new_centroid):
+
+        avg_distance = sum(self.distances_to_centroid) / len(self.distances_to_centroid)
+
+        distance_diff = list(map(lambda dist: abs(dist - avg_distance), self.distances_to_centroid))
+        min_dist = min(distance_diff)
+        min_dist_index = distance_diff.index(min_dist)
+
+        new_centroid = self.points[min_dist_index].tweet_id
+
+        if self.centroid == new_centroid:
             return False
         self.centroid = new_centroid
         self.points = []
