@@ -35,11 +35,16 @@ class Cluster(object):
         if len(self.points) == 0:
             return False
 
-        avg_distance = sum(self.distances_to_centroid) / len(self.distances_to_centroid)
+        distances = dict()
+        for point1 in self.points:
+            distances[point1] = list(map(lambda point2: point2.distanceTo(point1.text), self.points))
 
-        distance_diff = list(map(lambda dist: abs(dist - avg_distance), self.distances_to_centroid))
-        min_dist = min(distance_diff)
-        min_dist_index = distance_diff.index(min_dist)
+        total_dist = []
+        for key in distances:
+            total_dist.append(sum(distances[key]))
+
+        min_dist = min(total_dist)
+        min_dist_index = total_dist.index(min_dist)
 
         new_centroid = self.points[min_dist_index].tweet_id
 
