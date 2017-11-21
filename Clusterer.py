@@ -8,14 +8,14 @@ from pprint import pprint
 from Point import Point
 from Cluster import Cluster
 
-usage = 'Clusterer.py number_of_clusters /path/to/input/dataset.csv /path/to/output/file'
+usage = 'Clusterer.py number_of_clusters /path/to/input/InitialSeeds.txt /path/to/input/Tweets.json /path/to/output/file'
 MAX_ITERATIONS = 25
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 5:
     print('not enough arguments\n')
     print(usage)
     sys.exit(1)
-if len(sys.argv) > 4:
+if len(sys.argv) > 5:
     print('too many arguments\n')
     print(usage)
     sys.exit(1)
@@ -23,13 +23,26 @@ if len(sys.argv) > 4:
 
 def main(argv):
     number_of_clusters = int(argv[1])
-    input_data_path = Path(argv[2])
-    output_data_path = Path(argv[3])
+    input_data_path = Path(argv[3])
+    initial_seeds_path = Path(argv[2])
+    output_data_path = Path(argv[4])
 
-    data = pd.read_csv(filepath_or_buffer=input_data_path, delim_whitespace=True)
-    points = pointsFactory(data_frame=data)
-    centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=points)
+    # Read Tweet id and text
+    data = pd.read_json(input_data_path, lines=True)[['id', 'text']]
+
+    #points = pointsFactory(data_frame=data)
+
+    # Initial centroids
+    seeds = pd.read_csv(initial_seeds_path).iloc[:, 0]
+    if number_of_clusters > len(seeds):
+        print('The value of k must be less than', len(seeds))
+        sys.exit(1)
+    centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=seeds)
+
+    # Initialize clusters
     clusters = createClusters(centroids)
+
+    return
 
     iterator = count(2)
     is_finished = False
