@@ -33,16 +33,16 @@ def main(argv):
     iterator = count(2)
     is_finished = False
     iteration_number = 1
-    while(not is_finished and iteration_number <= MAX_ITERATIONS):
+    while not is_finished and not iteration_number > MAX_ITERATIONS:
         print('-'*80, '\n', 'iteration number: ', iteration_number)
         iteration_number = next(iterator)
         addPointsToClusters(points, clusters)
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
-        print('sum of squares error: %i' % (sum_of_squares_error))
+        print('sum of squares error:', sum_of_squares_error)
         num_moved = 0
         for cluster in clusters:
-            if(cluster.attemptMoveCentroid()):
+            if cluster.attemptMoveCentroid():
                 num_moved += 1
         is_finished = num_moved == 0
 

@@ -39,9 +39,9 @@ class Cluster(object):
         centroid_x /= len(self.points)
         centroid_y /= len(self.points)
         new_centroid = Point(centroid_x, centroid_y)
-        if(new_centroid == self.centroid):
+        if self.centroid.isEqual(new_centroid):
             return False
-        self.centroid
+        self.centroid = new_centroid
         self.points = []
         self.distances_to_centroid = []
         return True

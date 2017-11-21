@@ -13,3 +13,6 @@ class Point(object):
 
     def distanceTo(self, other_point):
         return pow(pow(other_point.x - self.x, 2) + pow(other_point.y - self.y, 2), .5)
+
+    def isEqual(self, other_point):
+        return self.x == other_point.x and self.y == other_point.y
