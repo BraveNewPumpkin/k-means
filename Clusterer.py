@@ -20,6 +20,7 @@ if len(sys.argv) > 4:
     print(usage)
     sys.exit(1)
 
+
 def main(argv):
     number_of_clusters = int(argv[1])
     input_data_path = Path(argv[2])
@@ -34,7 +35,7 @@ def main(argv):
     is_finished = False
     iteration_number = 1
     while not is_finished and not iteration_number > MAX_ITERATIONS:
-        print('-'*80, '\n', 'iteration number: ', iteration_number)
+        print('-' * 80, '\n', 'iteration number: ', iteration_number)
         iteration_number = next(iterator)
         addPointsToClusters(points, clusters)
         pprint(clusters)
@@ -46,10 +47,11 @@ def main(argv):
                 num_moved += 1
         is_finished = num_moved == 0
 
-#    with output_data_path.open(mode='w') as output_data_stream:
-#        data.to_csv(output_data_stream, index=False)
+    #    with output_data_path.open(mode='w') as output_data_stream:
+    #        data.to_csv(output_data_stream, index=False)
 
     return 0
+
 
 def pointsFactory(data_frame):
     points = []
@@ -61,11 +63,13 @@ def pointsFactory(data_frame):
         points.append(point)
     return points
 
+
 def createClusters(centroids):
     clusters = []
     for centroid in centroids:
         clusters.append(Cluster(centroid=centroid))
     return clusters
+
 
 def chooseCentroids(number_of_clusters, points):
     centroid_points = []
@@ -74,22 +78,23 @@ def chooseCentroids(number_of_clusters, points):
         centroid_points.append(points[index])
     return centroid_points
 
+
 def addPointsToClusters(points, clusters):
     for point in points:
         distances = []
         for cluster in clusters:
-           distances.append(point.distanceTo(cluster.centroid))
+            distances.append(point.distanceTo(cluster.centroid))
         min_distance = min(distances)
         min_distance_index = distances.index(min_distance)
         clusters[min_distance_index].addPoint(point, min_distance)
     return clusters
+
 
 def calcSumOfSquareError(clusters):
     sum_squared_distance = 0
     for cluster in clusters:
         sum_squared_distance += cluster.calcSumOfSquareError()
     return sum_squared_distance
-
 
 
 main(sys.argv)
