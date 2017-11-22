@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
+import random
 from pathlib import Path
-from random import randint
 from itertools import count
 from copy import deepcopy
 from pprint import pprint
@@ -30,7 +30,7 @@ def main(argv):
     output_data_path = Path(argv[3])
 
     data = pd.read_csv(filepath_or_buffer=input_data_path, delim_whitespace=True)
-    points = pointsFactory(data_frame=data)
+    points = createPoints(data_frame=data)
     centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=points)
     clusters = createClusters(centroids)
 
@@ -61,7 +61,7 @@ def main(argv):
 
     return 0
 
-def pointsFactory(data_frame):
+def createPoints(data_frame):
     points = []
     for tuple in data_frame.itertuples():
         id_num = tuple[1]
@@ -81,11 +81,33 @@ def createClusters(centroids):
 
 def chooseCentroids(number_of_clusters, points):
     centroid_points = []
+    ranges = fathomRanges(points)
     for i in range(0, number_of_clusters):
-        index = randint(0, len(points) - 1)
-        centroid_points.append(points[index])
+        x_min = ranges['x_min']
+        y_min = ranges['y_min']
+        x_max = ranges['x_max']
+        y_max = ranges['y_max']
+        x = random.uniform(x_min, x_max)
+        y = random.uniform(y_min, y_max)
+        centroid_points.append(Point(x=x, y=y))
     return centroid_points
 
+def fathomRanges(points):
+    if len(points) > 0:
+        x_max = points[0].x
+        x_min = points[0].x
+        y_max = points[0].y
+        y_min = points[0].y
+    for point in points:
+       if x_max < point.x:
+           x_max = point.x
+       if x_min > point.x:
+           x_min = point.x
+       if y_max < point.y:
+           y_max = point.y
+       if y_min > point.y:
+           y_min = point.y
+    return {'x_max': x_max, 'x_min': x_min, 'y_max': y_max, 'y_min': y_min}
 
 def addPointsToClusters(points, clusters):
     for point in points:

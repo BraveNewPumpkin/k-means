@@ -5,9 +5,7 @@ class Point(object):
         self.y = y
 
     def __str__(self):
-        string = 'x: ' + str(self.x) + ', y: ' + str(self.y)
-        return string
-
+        return self.__repr__()
     def __repr__(self):
         string = '(x: ' + str(self.x) + ', y: ' + str(self.y) + ')'
         return string
