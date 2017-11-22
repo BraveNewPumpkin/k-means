@@ -21,8 +21,9 @@ class Cluster(object):
         return string
 
     def addPoint(self, point, distanceToCentroid):
-        self.points.append(point)
-        self.distances_to_centroid.append(distanceToCentroid)
+        if point not in self.points:
+            self.points.append(point)
+            self.distances_to_centroid.append(distanceToCentroid)
 
     def calcSumOfSquareError(self):
         sum_squared_distance = 0
