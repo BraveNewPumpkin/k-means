@@ -1,13 +1,15 @@
 import sys
 import pandas as pd
-from matplotlib import pyplot
 from pathlib import Path
 from random import randint
 from itertools import count
+from copy import deepcopy
 from pprint import pprint
 
 from Point import Point
 from Cluster import Cluster
+from Plot import Plot
+from Plotter import Plotter
 
 usage = 'Clusterer.py number_of_clusters /path/to/input/dataset.csv /path/to/output/file'
 MAX_ITERATIONS = 25
@@ -32,50 +34,32 @@ def main(argv):
     centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=points)
     clusters = createClusters(centroids)
 
-    pyplot.close('all')
-    figure = pyplot.figure()
+    plotter = Plotter(num_columns=5, num_clusters=number_of_clusters)
 
     iterator = count(2)
     is_finished = False
     iteration_number = 1
     while not is_finished and not iteration_number > MAX_ITERATIONS:
-        print('-' * 80, '\n', 'iteration number: ', iteration_number)
+        print('-' * 80, '\n')
+        iteration_string = 'iteration number: ' + str(iteration_number)
+        print(iteration_string)
         addPointsToClusters(points, clusters)
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
         print('sum of squares error:', sum_of_squares_error)
+        plot = Plot(label=iteration_string, clusters=deepcopy(clusters))
+        plotter.addPlot(plot)
         num_moved = 0
         for cluster in clusters:
             if cluster.attemptMoveCentroid():
                 num_moved += 1
         is_finished = num_moved == 0
-
-        num_axes = len(figure.axes)
-        num_columns = 5
-        new_num_subplots = num_axes + 1
-        new_num_rows = calcRowNumber(plot_number=new_num_subplots, num_subplots_per_row=num_columns)
-        for i in range(num_axes):
-            plot_number = i + 1
-            figure.axes[i].change_geometry(new_num_rows, num_columns, plot_number)
-        new_subplot = figure.add_subplot(new_num_rows, num_columns, new_num_subplots)
-        new_subplot.set_title('iteration ' + str(iteration_number))
-        for cluster in clusters:
-            x = cluster.getXValues()
-            y = cluster.getYValues()
-            new_subplot.plot(x, y, 'o')
         iteration_number = next(iterator)
-    figure.subplots_adjust(wspace=0.9, hspace=0.9)
-    pyplot.show()
+    plotter.show()
     #    with output_data_path.open(mode='w') as output_data_stream:
     #        data.to_csv(output_data_stream, index=False)
 
     return 0
-
-def calcRowNumber(plot_number, num_subplots_per_row):
-    return (plot_number - 1) // num_subplots_per_row + 1
-
-def calcColumnNumber(plot_number, num_subplots_per_row):
-    return (plot_number - 1) % num_subplots_per_row + 1
 
 def pointsFactory(data_frame):
     points = []
