@@ -30,6 +30,12 @@ class Cluster(object):
             sum_squared_distance += pow(distance, 2)
         return sum_squared_distance
 
+    def getXValues(self):
+        return list(map(lambda point: point.x, self.points))
+
+    def getYValues(self):
+        return list(map(lambda point: point.y, self.points))
+
     # WARNING: this will delete points
     def attemptMoveCentroid(self):
         if len(self.points) == 0:
