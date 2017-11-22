@@ -21,14 +21,21 @@ class Cluster(object):
         return string
 
     def addPoint(self, point, distanceToCentroid):
-        self.points.append(point)
-        self.distances_to_centroid.append(distanceToCentroid)
+        if point not in self.points:
+            self.points.append(point)
+            self.distances_to_centroid.append(distanceToCentroid)
 
     def calcSumOfSquareError(self):
         sum_squared_distance = 0
         for distance in self.distances_to_centroid:
             sum_squared_distance += pow(distance, 2)
         return sum_squared_distance
+
+    def getXValues(self):
+        return list(map(lambda point: point.x, self.points))
+
+    def getYValues(self):
+        return list(map(lambda point: point.y, self.points))
 
     # WARNING: this will delete points
     def attemptMoveCentroid(self):

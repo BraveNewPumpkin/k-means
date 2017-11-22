@@ -3,10 +3,13 @@ import pandas as pd
 from pathlib import Path
 from random import randint
 from itertools import count
+from copy import deepcopy
 from pprint import pprint
 
 from Tweet import Tweet
 from Cluster import Cluster
+from Plot import Plot
+from Plotter import Plotter
 
 usage = 'Clusterer.py number_of_clusters /path/to/input/InitialSeeds.txt /path/to/input/Tweets.json /path/to/output/file'
 MAX_ITERATIONS = 25
@@ -45,27 +48,32 @@ def main(argv):
     # Initialize clusters
     clusters = createClusters(centroids)
 
+    plotter = Plotter(num_columns=5, num_clusters=number_of_clusters)
+
     iterator = count(2)
     is_finished = False
     iteration_number = 1
     while not is_finished and not iteration_number > MAX_ITERATIONS:
-        print('-' * 80, '\n', 'iteration number: ', iteration_number)
-        iteration_number = next(iterator)
-        addPointsToClusters(points, clusters, tweet_dict)
+        print('-' * 80, '\n')
+        iteration_string = 'iteration number: ' + str(iteration_number)
+        print(iteration_string)
+        addPointsToClusters(points, clusters)
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
         print('sum of squares error:', sum_of_squares_error)
+        plot = Plot(label=iteration_string, clusters=deepcopy(clusters))
+        plotter.addPlot(plot)
         num_moved = 0
         for cluster in clusters:
             if cluster.attemptMoveCentroid():
                 num_moved += 1
         is_finished = num_moved == 0
-
+        iteration_number = next(iterator)
+    plotter.show()
     #    with output_data_path.open(mode='w') as output_data_stream:
     #        data.to_csv(output_data_stream, index=False)
 
     return 0
-
 
 def tweetsFactory(data_frame):
     tweets = []

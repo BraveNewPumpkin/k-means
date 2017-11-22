@@ -1,10 +1,13 @@
 class Tweet(object):
     def __init__(self, tweet_id, text):
-        self.tweet_id = tweet_id
+        self.id_num = tweet_id
         self.text = text
 
     def __repr__(self):
-        return str(self.tweet_id) + ': ' + self.text
+        return str(self.id_num) + ': ' + self.text
+
+    def __eq__(self, other_point):
+        return self.id_num == other_point.id_num
 
     def distanceTo(self, tweet_text):
         tweet_1_words = set(self.text.split())
