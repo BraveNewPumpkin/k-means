@@ -28,7 +28,7 @@ class Plotter(object):
                 y = cluster.getYValues()
                 axis.scatter(x, y, color=color)
                 axis.plot(cluster.centroid.x, cluster.centroid.y, 'x', color=color)
-                print('label: ', plot.label, ' cluster id_num: ', cluster.id_num, ' centroid: ', cluster.centroid, ' color: ', color)
+                #print('label: ', plot.label, ' cluster id_num: ', cluster.id_num, ' centroid: ', cluster.centroid, ' color: ', color)
         self.figure.subplots_adjust(wspace=0.5, hspace=0.5)
         pyplot.show()
 
