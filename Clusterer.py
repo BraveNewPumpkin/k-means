@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
+import random
 from pathlib import Path
-from random import randint
 from itertools import count
 from copy import deepcopy
 from pprint import pprint
@@ -36,7 +36,7 @@ def main(argv):
     # Create a dictionary with tweet_id as the key
     tweet_dict = data.set_index('text').groupby('id').apply(lambda df: df.index.tolist()).to_dict()
 
-    points = tweetsFactory(data_frame=data)
+    points = createTweets(data_frame=data)
 
     # Initial centroids
     seeds = pd.read_csv(initial_seeds_path).iloc[:, 0]
@@ -75,7 +75,7 @@ def main(argv):
 
     return 0
 
-def tweetsFactory(data_frame):
+def createTweets(data_frame):
     tweets = []
     for tuple in data_frame.itertuples():
         tweet_id = tuple[1]
@@ -92,13 +92,8 @@ def createClusters(centroids):
     return clusters
 
 
-def chooseCentroids(number_of_clusters, points):
-    centroid_points = []
-    for i in range(0, number_of_clusters):
-        index = randint(0, len(points) - 1)
-        centroid_points.append(points[index])
-    return centroid_points
-
+def chooseCentroids(number_of_clusters, seeds):
+    return seeds.sample(number_of_clusters)
 
 def addPointsToClusters(points, clusters, tweet_dict):
     for point in points:
