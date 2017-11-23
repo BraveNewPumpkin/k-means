@@ -8,8 +8,6 @@ from pprint import pprint
 
 from Tweet import Tweet
 from Cluster import Cluster
-from Plot import Plot
-from Plotter import Plotter
 
 usage = 'Clusterer.py number_of_clusters /path/to/input/InitialSeeds.txt /path/to/input/Tweets.json /path/to/output/file'
 MAX_ITERATIONS = 25
