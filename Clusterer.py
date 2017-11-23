@@ -1,9 +1,7 @@
 import sys
 import pandas as pd
-import random
 from pathlib import Path
 from itertools import count
-from copy import deepcopy
 from pprint import pprint
 
 from Tweet import Tweet
@@ -46,8 +44,6 @@ def main(argv):
     # Initialize clusters
     clusters = createClusters(centroids)
 
-    plotter = Plotter(num_columns=5, num_clusters=number_of_clusters)
-
     iterator = count(2)
     is_finished = False
     iteration_number = 1
@@ -59,8 +55,6 @@ def main(argv):
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
         print('sum of squares error:', sum_of_squares_error)
-        plot = Plot(label=iteration_string, clusters=deepcopy(clusters))
-        plotter.addPlot(plot)
         num_moved = 0
         for cluster in clusters:
             if cluster.attemptMoveCentroid():
