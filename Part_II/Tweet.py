@@ -6,6 +6,9 @@ class Tweet(object):
     def __repr__(self):
         return str(self.id_num) + ': ' + self.text
 
+    def __hash__(self):
+        return hash(self.id_num)
+
     def __eq__(self, other_point):
         return self.id_num == other_point.id_num
 
