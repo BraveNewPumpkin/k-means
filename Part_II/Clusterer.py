@@ -39,7 +39,7 @@ def main(argv):
     if number_of_clusters > len(seeds):
         print('The value of k must be less than', len(seeds))
         sys.exit(1)
-    centroids = chooseCentroids(number_of_clusters=number_of_clusters, points=seeds)
+    centroids = chooseCentroids(number_of_clusters=number_of_clusters, seeds=seeds)
 
     # Initialize clusters
     clusters = createClusters(centroids)
