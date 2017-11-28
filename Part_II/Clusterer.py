@@ -51,7 +51,7 @@ def main(argv):
         print('-' * 80, '\n')
         iteration_string = 'iteration number: ' + str(iteration_number)
         print(iteration_string)
-        addPointsToClusters(points, clusters)
+        addPointsToClusters(points=points, clusters=clusters, tweet_dict=tweet_dict)
         pprint(clusters)
         sum_of_squares_error = calcSumOfSquareError(clusters)
         print('sum of squares error:', sum_of_squares_error)
