@@ -35,7 +35,7 @@ def main(argv):
     points = createTweets(data_frame=data)
 
     # Initial centroids
-    seeds = pd.read_csv(initial_seeds_path).iloc[:, 0]
+    seeds = (pd.read_csv(initial_seeds_path, names=['a', 'b'])).iloc[:, 0]
     if number_of_clusters > len(seeds):
         print('The value of k must be less than', len(seeds))
         sys.exit(1)
