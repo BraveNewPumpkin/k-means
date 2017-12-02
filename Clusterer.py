@@ -47,22 +47,30 @@ def main(argv):
     iterator = count(2)
     is_finished = False
     iteration_number = 1
+
     while not is_finished and not iteration_number > MAX_ITERATIONS:
         print('-' * 80, '\n')
-        iteration_string = 'iteration number: ' + str(iteration_number)
+        iteration_string = 'Iteration #' + str(iteration_number)
         print(iteration_string)
         addPointsToClusters(points=points, clusters=clusters, tweet_dict=tweet_dict)
-        pprint(clusters)
+        for cluster in clusters:
+            print(cluster)
         sum_of_squares_error = calcSumOfSquareError(clusters)
-        print('sum of squares error:', sum_of_squares_error)
+        print('Sum of Squares Error:', sum_of_squares_error)
         num_moved = 0
         for cluster in clusters:
             if cluster.attemptMoveCentroid():
                 num_moved += 1
         is_finished = num_moved == 0
         iteration_number = next(iterator)
-    #    with output_data_path.open(mode='w') as output_data_stream:
-    #        data.to_csv(output_data_stream, index=False)
+
+    with open(output_data_path, 'w+') as output_file:
+        for cluster in clusters:
+            output_file.write('\n' + str(cluster))
+        sum_of_squares_error = calcSumOfSquareError(clusters)
+        output_file.write('\n\nSum of Squares Error: ' + str(sum_of_squares_error))
+
+        output_file.close()
 
     return 0
 

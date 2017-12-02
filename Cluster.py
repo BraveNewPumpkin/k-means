@@ -17,7 +17,7 @@ class Cluster(object):
         return self.__repr__()
 
     def __repr__(self):
-        string = str(self.id_num) + ' '
+        string = str(self.id_num) + '\t'
         string += ','.join(map(lambda point: str(point.id_num), self.points))
         return string
 
