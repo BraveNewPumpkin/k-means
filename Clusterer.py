@@ -39,25 +39,32 @@ def main(argv):
     iterator = count(2)
     is_finished = False
     iteration_number = 1
-    while not is_finished and not iteration_number > MAX_ITERATIONS:
-        print('-' * 80, '\n')
-        iteration_string = 'iteration number: ' + str(iteration_number)
-        print(iteration_string)
-        addPointsToClusters(points, clusters)
-        pprint(clusters)
-        sum_of_squares_error = calcSumOfSquareError(clusters)
-        print('sum of squares error:', sum_of_squares_error)
-        plot = Plot(label=iteration_string, clusters=deepcopy(clusters))
-        plotter.addPlot(plot)
-        num_moved = 0
-        for cluster in clusters:
-            if cluster.attemptMoveCentroid():
-                num_moved += 1
-        is_finished = num_moved == 0
-        iteration_number = next(iterator)
+
+    with open(output_data_path, 'w+') as f:
+
+        while not is_finished and not iteration_number > MAX_ITERATIONS:
+            print('-' * 80, '\n')
+            iteration_string = 'Iteration #' + str(iteration_number)
+            f.write('\n\n' + iteration_string)
+            print(iteration_string)
+            addPointsToClusters(points, clusters)
+            for cluster in clusters:
+                print(cluster)
+                f.write('\n' + str(cluster))
+            sum_of_squares_error = calcSumOfSquareError(clusters)
+            print('Sum of Squares Error:', sum_of_squares_error)
+            f.write('\nSum of Squares Error: ' + str(sum_of_squares_error))
+            plot = Plot(label=iteration_string, clusters=deepcopy(clusters))
+            plotter.addPlot(plot)
+            num_moved = 0
+            for cluster in clusters:
+                if cluster.attemptMoveCentroid():
+                    num_moved += 1
+            is_finished = num_moved == 0
+            iteration_number = next(iterator)
+
+    f.close()
     plotter.show()
-    #    with output_data_path.open(mode='w') as output_data_stream:
-    #        data.to_csv(output_data_stream, index=False)
 
     return 0
 
